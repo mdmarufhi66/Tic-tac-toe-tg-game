@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Cooldown configuration ---
     const COOLDOWN_DURATION = 3 * 60 * 1000; // 3 minutes in milliseconds
-    const COOLDOWN_STORAGE_KEY_VIDEO = 'monetag_video_cooldown'; // Local Storage Key
-    const COOLDOWN_STORAGE_KEY_STATIC = 'monetag_static_cooldown'; // Local Storage Key
+    const COOLDOWN_STORAGE_KEY_VIDEO = 'whephiwums_video_cooldown'; // Local Storage Key
+    const COOLDOWN_STORAGE_KEY_STATIC = 'whephiwums_static_cooldown'; // Local Storage Key
 
     // --- Cooldown state variables ---
     let lastVideoAdTime = parseInt(localStorage.getItem(COOLDOWN_STORAGE_KEY_VIDEO) || '0', 10);
@@ -105,104 +105,85 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Monetag Ad Loading and Showing (PLACEHOLDER FUNCTIONS) ---
+    // --- Whephiwums.com Ad Loading and Showing ---
 
-    // !! IMPORTANT: YOU NEED TO REPLACE THE CONTENTS OF THESE FUNCTIONS
-    // !! WITH YOUR ACTUAL MONETAG SDK INTEGRATION CODE.
-    // !! Consult Monetag documentation for the exact methods to load and show
-    // !! your specific ad formats (Rewarded, Interstitial, Popup, etc.) and
-    // !! how to handle their lifecycle events (loaded, shown, completed/rewarded, closed, error).
+    // This assumes the whephiwums.com SDK provides a global function called 'show_9237531'
+    // as indicated in the script tag data attribute and the snippet you provided.
 
     function loadAndShowVideoAd() {
-        console.log("Attempting to load and show Video Ad (Monetag Placeholder)...");
+        console.log("Attempting to load and show Video (Rewarded Interstitial) Ad...");
 
-        // --- START: REPLACE WITH YOUR ACTUAL MONETAG VIDEO AD CODE ---
-
-        // Example structure (replace with actual Monetag SDK calls):
-        if (typeof yourMonetagVideoAdObject !== 'undefined') { // Check if your Monetag ad object/SDK is available
-            yourMonetagVideoAdObject.load({ /* parameters like zoneId */ })
-                .then(() => { // Assuming a Promise-based load or success callback
-                    console.log("Video Ad Loaded (Monetag Placeholder)");
-                    yourMonetagVideoAdObject.show() // Assuming a show method
-                        .then(() => { // Assuming a Promise-based show or completion callback
-                             console.log("Video Ad Watched/Completed (Monetag Placeholder - Reward Event)");
-                             // !! Call startCooldown ONLY when the ad is successfully watched/completed
-                             startCooldown('video'); // Start cooldown after successful watch
-                        })
-                        .catch((error) => { // Assuming error handling for show
-                            console.error("Video Ad Show Error (Monetag Placeholder):", error);
-                            alert("Failed to show video ad. Please try again later.");
-                            // Re-enable button if it was disabled before showing
-                            watchVideoBtn.disabled = !isCooldownOver(lastVideoAdTime);
-                            // You might NOT want to start cooldown on show error
-                        });
+        // Check if the SDK function is available
+        if (typeof show_9237531 === 'function') {
+            // Call the SDK function for Rewarded Interstitial
+            // The .then() block executes when the ad is successfully watched/completed.
+            // The .catch() block handles errors during ad display.
+            show_9237531()
+                .then(() => {
+                    console.log("Video Ad (Rewarded Interstitial) Watched/Completed.");
+                    // Start cooldown after the ad is successfully completed and rewarded.
+                    startCooldown('video');
                 })
-                .catch((error) => { // Assuming error handling for load
-                    console.error("Video Ad Load Error (Monetag Placeholder):", error);
-                    alert("Failed to load video ad. Please try again later.");
-                     // Re-enable button
+                .catch(e => {
+                    console.error("Video Ad (Rewarded Interstitial) Error:", e);
+                    alert("Failed to show video ad. Please try again later.");
+                    // Re-enable button if it was disabled before showing due to error
                     watchVideoBtn.disabled = !isCooldownOver(lastVideoAdTime);
-                    // You might NOT want to start cooldown on load error
+                    // Do NOT start cooldown on error, as the user didn't see the ad.
                 });
         } else {
-            console.error("Monetag Video Ad SDK object not found. Ensure SDK is loaded and initialized.");
+            console.error("Whephiwums.com SDK function 'show_9237531' not found. Ensure SDK is loaded.");
             alert("Ad service not available. Please try again later.");
-            watchVideoBtn.disabled = !isCooldownOver(lastVideoAdTime); // Re-enable button
+            // Re-enable button if SDK is not available
+            watchVideoBtn.disabled = !isCooldownOver(lastVideoAdTime);
         }
-
-        // --- END: REPLACE WITH YOUR ACTUAL MONETAG VIDEO AD CODE ---
     }
 
      function loadAndShowStaticAd() {
-        console.log("Attempting to load and show Static Ad (Monetag Placeholder)...");
+        console.log("Attempting to load and show Static (Rewarded Popup) Ad...");
 
-        // --- START: REPLACE WITH YOUR ACTUAL MONETAG STATIC AD CODE ---
+         // Check if the SDK function is available
+        if (typeof show_9237531 === 'function') {
+             // Call the SDK function for Rewarded Popup ('pop')
+             // The .then() block executes when the ad is successfully shown/closed.
+             // The .catch() block handles errors during ad display.
+             show_9237531('pop')
+                .then(() => {
+                     console.log("Static Ad (Rewarded Popup) Shown/Closed.");
+                     // Start cooldown after the ad is successfully displayed/interacted with.
+                     startCooldown('static');
+                })
+                .catch(e => {
+                     console.error("Static Ad (Rewarded Popup) Error:", e);
+                     alert("Failed to show static ad. Please try again later.");
+                     // Re-enable button if it was disabled before showing due to error
+                     watchStaticBtn.disabled = !isCooldownOver(lastStaticAdTime);
+                     // Do NOT start cooldown on error.
+                });
 
-        // Example structure (replace with actual Monetag SDK calls):
-         if (typeof yourMonetagStaticAdObject !== 'undefined') { // Check if your Monetag ad object/SDK is available
-             yourMonetagStaticAdObject.load({ /* parameters like zoneId */ })
-                 .then(() => { // Assuming a Promise-based load or success callback
-                      console.log("Static Ad Loaded (Monetag Placeholder)");
-                      yourMonetagStaticAdObject.show() // Assuming a show method
-                           .then(() => { // Assuming a Promise-based show or completion callback
-                                console.log("Static Ad Shown (Monetag Placeholder)");
-                                // !! Call startCooldown after the static ad is shown/closed if that's your trigger
-                                // !! For static ads, completion might just be showing it or closing it.
-                                // !! Adjust based on Monetag's events and your desired trigger for cooldown.
-                                startCooldown('static'); // Start cooldown after successful display/interaction
-                           })
-                           .catch((error) => { // Assuming error handling for show
-                                console.error("Static Ad Show Error (Monetag Placeholder):", error);
-                                alert("Failed to show static ad. Please try again later.");
-                                // Re-enable button if it was disabled before showing
-                                watchStaticBtn.disabled = !isCooldownOver(lastStaticAdTime);
-                                // You might NOT want to start cooldown on show error
-                           });
-                 })
-                  .catch((error) => { // Assuming error handling for load
-                      console.error("Static Ad Load Error (Monetag Placeholder):", error);
-                      alert("Failed to load static ad. Please try again later.");
-                       // Re-enable button
-                      watchStaticBtn.disabled = !isCooldownOver(lastStaticAdTime);
-                      // You might NOT want to start cooldown on load error
-                  });
-         } else {
-             console.error("Monetag Static Ad SDK object not found. Ensure SDK is loaded and initialized.");
-             alert("Ad service not available. Please try again later.");
-             watchStaticBtn.disabled = !isCooldownOver(lastStaticAdTime); // Re-enable button
-         }
+            // Note: The whephiwums.com snippet also showed an In-App Interstitial format:
+            // show_9237531({ type: 'inApp', inAppSettings: { ... } })
+            // If you prefer this format for the static button, you would use that call instead,
+            // but ensure you have appropriate event handling to know when to start the cooldown.
+            // The 'pop' format is used here because its Promise-based structure integrates cleanly.
 
-         // --- END: REPLACE WITH YOUR ACTUAL MONETAG STATIC AD CODE ---
+
+        } else {
+            console.error("Whephiwums.com SDK function 'show_9237531' not found. Ensure SDK is loaded.");
+            alert("Ad service not available. Please try again later.");
+            // Re-enable button if SDK is not available
+            watchStaticBtn.disabled = !isCooldownOver(lastStaticAdTime);
+        }
     }
 
     // --- Button Click Handlers ---
 
     watchVideoBtn.addEventListener('click', () => {
         if (isCooldownOver(lastVideoAdTime)) {
-            console.log("Video ad button clicked, cooldown over. Attempting to load ad.");
+            console.log("Video ad button clicked, cooldown over. Attempting to show ad.");
             // Temporarily disable button while ad is loading/showing
             watchVideoBtn.disabled = true;
-            watchVideoBtn.innerText = 'Loading...';
+            watchVideoBtn.innerText = 'Loading...'; // Or change to "Showing Ad..." once show is called
             loadAndShowVideoAd();
         } else {
             // This case should ideally not happen if the button is disabled correctly
@@ -212,10 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     watchStaticBtn.addEventListener('click', () => {
         if (isCooldownOver(lastStaticAdTime)) {
-            console.log("Static ad button clicked, cooldown over. Attempting to load ad.");
+            console.log("Static ad button clicked, cooldown over. Attempting to show ad.");
              // Temporarily disable button while ad is loading/showing
             watchStaticBtn.disabled = true;
-            watchStaticBtn.innerText = 'Loading...';
+            watchStaticBtn.innerText = 'Loading...'; // Or change to "Showing Ad..."
             loadAndShowStaticAd();
         } else {
              // This case should ideally not happen if the button is disabled correctly
