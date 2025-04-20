@@ -1,0 +1,40 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: black;
+  color: white;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  background-color: black;
+  padding: 10px;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  border: 2px solid white;
+}
+
+.cell.winner {
+  background-color: #00aaff;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
